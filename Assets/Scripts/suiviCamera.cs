@@ -1,50 +1,62 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+
+/*
+ * Here is the script which move the canvas with the interface, following the vision of the camera, but let a little marge to permet the user to click on button which are on sides.
+ */
 
 public class suiviCamera : MonoBehaviour
 {
 
     public GameObject mainCam;
 
+    // Position of the camera
     private float positionX;
     private float positionY;
     private float positionZ;
+
+    // Distance between the object and the camera
     private float distanceX;
     private float distanceY;
     private float distanceZ;
     private float distanceEcart;
     private float distance;
+
+    // Angles of the camera
     private float angleX;
     private float angleY;
+
+    // Angles between the object and the camera
     private float angleObjetX;
     private float angleObjetY;
+
+    // Ecart d'angle avant translation de l'objet
     private float angleEcartX;
     private float angleEcartY;
     private float angleMultiplicateurEcartX;
     private float angleMultiplicateurEcartY;
     private float angleMarge;
+
+    // Size of the object
     private float width;
     private float height;
     private float scaleX;
     private float scaleY;
 
-
-    // Use this for initialization
+    
     void Start()
     {
-
-        // Initialisation des paramètres position/rotation objet
+        // Put in memory the distance between the camera and the object at the beginning to keep the object at this distance (but with others directions)
         distanceX = transform.position.x - mainCam.transform.position.x;
         distanceY = transform.position.y - mainCam.transform.position.y;
         distanceZ = transform.position.z - mainCam.transform.position.z;
-        distanceEcart = 0.1f;
+        distanceEcart = 0.1f;       // Add 0.1 in order to keep the cursor in front the object
         distance = Mathf.Sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ) + distanceEcart;
+        // Angle of the camera to replace the object in front of it
         angleObjetX = mainCam.transform.eulerAngles.x * Mathf.PI / 180;
         angleObjetY = mainCam.transform.eulerAngles.y * Mathf.PI / 180;
 
-        // Initialisation position/rotation objet
+        // Put the object in front of the camera
         distanceZ = distance * Mathf.Sin(angleObjetX + Mathf.PI / 2) * Mathf.Cos(angleObjetY);
         distanceX = distance * Mathf.Sin(angleObjetX + Mathf.PI / 2) * Mathf.Sin(angleObjetY);
         distanceY = distance * Mathf.Cos(angleObjetX + Mathf.PI / 2);

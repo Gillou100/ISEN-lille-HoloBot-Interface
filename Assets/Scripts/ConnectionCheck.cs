@@ -1,30 +1,35 @@
 ﻿using UnityEngine;
 
-public class ConnectionCheck : MonoBehaviour {
 
-    public GameObject start;
-    public GameObject shutdown;
+/*
+ * Here is the script which exchange the connection button and the disconnection button according to the variable isConnected.
+ */
+
+public class ConnectionCheck : MonoBehaviour
+{
+    public GameObject connectionButton;
+    public GameObject disconnectionButton;
 
     bool previousState;
 
     private void Start()
     {
-        ChangeState();
         previousState = UDPNetworking.isConnected;
+        ChangeState();
     }
 
     void ChangeState()
     {
-        start.SetActive(!UDPNetworking.isConnected);
-        shutdown.SetActive(UDPNetworking.isConnected);
+        connectionButton.SetActive(!UDPNetworking.isConnected);
+        disconnectionButton.SetActive(UDPNetworking.isConnected);
     }
-
-    // Update is called once per frame
-    void Update () {
+    
+    void Update ()
+    {
         if (UDPNetworking.isConnected != previousState)
         {
             ChangeState();
+            previousState = UDPNetworking.isConnected;
         }
-        previousState = UDPNetworking.isConnected;
     }
 }

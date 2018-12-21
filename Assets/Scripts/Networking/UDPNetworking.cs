@@ -1,6 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿/*
+ * Here is the network class which is really used. it is a UDPNetworkingUnity or UDPNetworkingHoloLens subclass depending on the context
+ * 
+ * To know why we have both HoloLens and Unity network class, please read the documentation. (Warning: the documentaion is in french.)
+ * 
+ * This class is not abstract because we need this script with a Unity object (Otherwise, her Start method won't run).
+ * 
+ * This class describe how the network will work, what it have to do.
+ */
 
 #if UNITY_EDITOR
 public class UDPNetworking : UDPNetworkingUnity
@@ -8,7 +14,7 @@ public class UDPNetworking : UDPNetworkingUnity
 public class UDPNetworking : UDPNetworkingHoloLens
 #endif
 {
-    int tentatives = 0;
+    private static int tentatives = 0;  // After sending a message, we count the number of message received which are different from the sent to know if we receive an echo
 
     new protected void Start()
     {
@@ -19,31 +25,35 @@ public class UDPNetworking : UDPNetworkingHoloLens
     new private void Update()
     {
         base.Update();
+
         if(isConnected)
         {
-            if (messageReceive == messageSend)
+            /*
+             * Here are tests to know handle the message received.
+             */
+            if (messageReceived == messageSent)
             {
-                LogField.text = "echo réussit : " + messageSend + "\n";
-                messageSend = null;
-                messageReceive = "";
+                log += "echo réussit : " + messageSent + "\n";
+                messageSent = null;
+                messageReceived = "";
                 tentatives = 0;
             }
-            else if(messageReceive != "")
+            else if(messageReceived != "")
             {
-                log += "Message receive : " + messageReceive + "\n";
-                if (messageSend != null)
+                log += "Message receive : " + messageReceived + "\n";
+                if (messageSent != null)
                 {
                     tentatives++;
                 }
-                messageReceive = "";
+                messageReceived = "";
             }
             if (tentatives == 3)
             {
-                log += "echo échoué : " + messageSend + "\n";
+                log += "echo échoué : " + messageSent + "\n";
                 tentatives = 0;
-                messageSend = null;
+                messageSent = null;
             }
-            if (messageReceive == "endC")
+            if (messageReceived == "endC")
             {
                 Disconnection();
             }
